@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Sisco</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_user">Usuário</string>
+    <string name="prompt_password">Senha</string>
+    <string name="action_sign_in">Entrar</string>
+    <string name="action_sign_in_short">Entrar</string>
+    <string name="error_invalid_user">Usuário inválido</string>
+    <string name="error_invalid_password">Senha muito curta</string>
+    <string name="error_incorrect_password">Senha incorreta</string>
+    <string name="error_field_required">Campo necessário</string>
+    <string name="title_activity_main">MainActivity</string>
+    
+    <string name="tipo_label">Tipo:</string>
+    <string name="tipo_value">Tipo aqui</string>
+
+    <string name="tipo_funcionario">Funcionário</string>
+    <string name="tipo_atendente">Atendente</string>
+    <string name="tipo_sindico">Síndico</string>
+    <string name="gerenciar_empresas">Gerenciar Empresas</string>
+    <string name="gerenciar_usuarios">Gerenciar Usuários</string>
+    <string name="enviar_arq_de_acesso">Enviar Arq. de Acesso</string>
+    <string name="enviar_reconfig_temp">Enviar Reconfig. Temp.</string>
+    <string name="consultar_acessos">Consultar Acessos</string>
+    <string name="acessar_catraca">Acessar Catraca</string>
+</resources>
