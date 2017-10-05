@@ -11,7 +11,7 @@
     <string name="error_incorrect_password">Senha incorreta</string>
     <string name="error_field_required">Campo necessário</string>
     <string name="title_activity_main">MainActivity</string>
-    
+
     <string name="tipo_label">Tipo:</string>
     <string name="tipo_value">Tipo aqui</string>
 

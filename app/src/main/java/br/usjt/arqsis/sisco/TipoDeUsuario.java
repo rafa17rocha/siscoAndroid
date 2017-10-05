@@ -6,7 +6,5 @@ package br.usjt.arqsis.sisco;
 
 public enum TipoDeUsuario
 {
-	FUNCIONARIO,
-	ATENDENTE,
-	SINDICO
+	FUNCIONARIO, ATENDENTE, SINDICO
 }

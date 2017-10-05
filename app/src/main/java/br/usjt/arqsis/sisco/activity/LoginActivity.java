@@ -5,28 +5,28 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import java.io.IOException;
 
 import br.usjt.arqsis.sisco.R;
-import br.usjt.arqsis.sisco.TipoDeUsuario;
 import br.usjt.arqsis.sisco.model.Usuario;
+import br.usjt.arqsis.sisco.util.JsonFacade;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * A login screen that offers login via user/password.
  */
 public class LoginActivity extends AppCompatActivity
 {
-
-	private static final String[] USUARIOS_TEMPORARIOS = new String[]{
-			"sindico:sindico:" + TipoDeUsuario.SINDICO,
-			"atendente:atendente:" + TipoDeUsuario.ATENDENTE,
-			"funcionario:funcionario:" + TipoDeUsuario.FUNCIONARIO};
+	// COLOQUE AQUI O CAMINHO DO TOMCAT
+	private static final String PATH_DO_TOMCAT = "http://192.168.15.10:8080/";
 
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
@@ -90,23 +90,10 @@ public class LoginActivity extends AppCompatActivity
 			cancel = true;
 		}
 
-		else if (!isPasswordValid(password))
-		{
-			mPasswordView.setError(getString(R.string.error_invalid_password));
-			focusView = mPasswordView;
-			cancel = true;
-		}
-
 		// Check for a valid user.
 		if (TextUtils.isEmpty(user))
 		{
 			mUserView.setError(getString(R.string.error_field_required));
-			focusView = mUserView;
-			cancel = true;
-		}
-		else if (!isUserValid(user))
-		{
-			mUserView.setError(getString(R.string.error_invalid_user));
 			focusView = mUserView;
 			cancel = true;
 		}
@@ -121,28 +108,20 @@ public class LoginActivity extends AppCompatActivity
 		{
 			// Kick off a background task to
 			// perform the user login attempt.
-			mAuthTask = new UserLoginTask(user, password);
+
+			String url = PATH_DO_TOMCAT + "sisco/login";
+
+			mAuthTask = new UserLoginTask(url, user, password);
 			mAuthTask.execute((Void) null);
 		}
 	}
 
-	private void startMain(Usuario user)
+	private void startMain(Usuario usuario)
 	{
 		Intent intent = new Intent(this, MainActivity.class);
-		intent.putExtra("usuario", user);
+		intent.putExtra("usuario", usuario);
 		startActivity(intent);
 	}
-
-	private boolean isUserValid(String user)
-	{
-		return user.length() >= 6;
-	}
-
-	private boolean isPasswordValid(String password)
-	{
-		return password.length() >= 4;
-	}
-
 
 	/**
 	 * Represents an asynchronous login/registration task used to authenticate
@@ -151,50 +130,55 @@ public class LoginActivity extends AppCompatActivity
 	private class UserLoginTask extends AsyncTask<Void, Void, Boolean>
 	{
 
-		private final String mUsuario;
+		private final String mUrl;
+		private final String mLogin;
 		private final String mSenha;
-		private TipoDeUsuario mTipo;
+		public Usuario usuario;
 
-		UserLoginTask(String user, String password)
+		UserLoginTask(String url, String login, String senha)
 		{
-			mUsuario = user;
-			mSenha = password;
+			mUrl = url;
+			mLogin = login;
+			mSenha = senha;
 		}
 
 		@Override
 		protected Boolean doInBackground(Void... params)
 		{
-			for (String tupla : USUARIOS_TEMPORARIOS)
-			{
-				String[] login = tupla.split(":");
-				if (login[0].equals(mUsuario))
-				{
-					// Conta exite, retorna 'True' se a senha for correta
-					if (login[1].equals(mSenha))
-					{
-						mTipo = TipoDeUsuario.valueOf(login[2]);
-						return true;
-					}
-				}
-			}
+			String path = mUrl + "?login=" + mLogin + "&senha=" + mSenha;
 
+			OkHttpClient client = new OkHttpClient();
+
+			Request request = new Request.Builder().url(path).build();
+
+			Response response;
+
+			try
+			{
+				response = client.newCall(request).execute();
+				usuario = JsonFacade.jsonToUsuario(response.body().string());
+
+				if (usuario != null)
+				{
+					return true;
+				}
+
+			}
+			catch (IOException e)
+			{
+				Log.e("Erro: ", e.getMessage());
+			}
 			return false;
 		}
 
 		@Override
-		protected void onPostExecute(final Boolean success)
+		protected void onPostExecute(final Boolean validado)
 		{
 			mAuthTask = null;
 
-			if (success)
+			if (validado)
 			{
-				Usuario user = new Usuario();
-
-				user.setUsuario(mUsuario);
-				user.setSenha(mSenha);
-				user.setTipo(mTipo);
-
-				startMain(user);
+				startMain(usuario);
 //				finish();
 			}
 			else

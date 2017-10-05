@@ -1,14 +1,11 @@
 package br.usjt.arqsis.sisco.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import br.usjt.arqsis.sisco.R;
-import br.usjt.arqsis.sisco.TipoDeUsuario;
 import br.usjt.arqsis.sisco.model.Usuario;
 
 public class MainActivity extends AppCompatActivity
